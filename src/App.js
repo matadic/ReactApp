@@ -20,31 +20,31 @@ export default function App() {
   const [memberId, setMemberId] = useState([]);
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    drone.on("open", (error) => {
+  drone.on(
+    "open",
+    (error) => {
       if (error) {
         return console.error(error);
       }
       let newMember = memberId;
       newMember.id = drone.clientId;
       setMemberId(newMember);
-    });
-
-    room.on("message", (message) => {
-      const { data, id, member, timestamp } = message;
-      let copyChat = messages;
-      copyChat.push({ member: member, text: data, id: id, time: timestamp });
-      let newMessages = [...copyChat];
-      setMessages(newMessages);
-    });
-  }, []);
+      room.on("message", (message) => {
+        const { data, id, member } = message;
+        let copyChat = messages;
+        copyChat.push({ member: member, text: data, id: id });
+        let newMessages = [...copyChat];
+        setMessages(newMessages);
+      });
+    },
+    []
+  );
 
   const sendMessage = (message) => {
     drone.publish({
       room: roomId,
       message,
     });
-    console.log("test-primljeno");
   };
 
   return (
